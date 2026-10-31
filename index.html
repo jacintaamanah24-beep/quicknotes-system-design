@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNotes - Your Notes Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="api.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <h1>QuickNotes</h1>
+        <p>Your simple space for capturing ideas.</p>
+    </header>
+
+    <main>
+        <section class="notes-section">
+            <h2>Your Notes</h2>
+
+            <button id="load-btn" type="button">Load Notes</button>
+
+            <p id="status" role="status" aria-live="polite">
+                Click Load Notes to get started.
+            </p>
+
+            <ul id="notes-list"></ul>
+        </section>
+
+        <section class="form-section">
+            <h2>Create a New Note</h2>
+
+            <form id="note-form">
+                <label for="title-input">Note Title</label>
+                <input
+                    type="text"
+                    id="title-input"
+                    maxlength="100"
+                    required
+                    placeholder="Enter your note title"
+                >
+
+                <label for="body-input">Note Content</label>
+                <textarea
+                    id="body-input"
+                    rows="5"
+                    placeholder="Write your thoughts here..."
+                ></textarea>
+
+                <button id="submit-btn" type="submit">
+                    Create Note
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 QuickNotes. Built with HTML, CSS and JavaScript.</p>
+    </footer>
+
+</body>
+</html>
