@@ -32,6 +32,60 @@ function showStatus(message, type = "") {
     statusMessage.className = type;
 }
 
+// DELETE: Remove a note from the server
+async function deleteNote(noteId, deleteButton, noteElement) {
+    deleteButton.disabled = true;
+    showStatus("Deleting note...");
+
+    try {
+        const result = await request(`${API_URL}/${noteId}`, {
+            method: "DELETE"
+        });
+
+        // Remove the note from the screen after success
+        noteElement.remove();
+
+        showStatus(
+            `Note deleted successfully (status ${result.status}).`,
+            "status-success"
+        );
+
+    } catch (error) {
+        showStatus(
+            `Unable to delete note. ${error.message}`,
+            "status-error"
+        );
+
+    } finally {
+        deleteButton.disabled = false;
+    }
+}
+
+// Create and display one note
+function createNoteElement(note) {
+    const item = document.createElement("li");
+
+    const title = document.createElement("h3");
+    title.textContent = note.title;
+
+    const body = document.createElement("p");
+    body.textContent = note.body || "No content available.";
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.type = "button";
+
+    deleteButton.addEventListener("click", () => {
+        deleteNote(note.id, deleteButton, item);
+    });
+
+    item.appendChild(title);
+    item.appendChild(body);
+    item.appendChild(deleteButton);
+
+    return item;
+}
+
 // Display notes
 function displayNotes(notes) {
     notesList.replaceChildren();
@@ -44,17 +98,7 @@ function displayNotes(notes) {
     }
 
     notes.forEach(note => {
-        const item = document.createElement("li");
-
-        const title = document.createElement("h3");
-        title.textContent = note.title;
-
-        const body = document.createElement("p");
-        body.textContent = note.body || "No content available.";
-
-        item.appendChild(title);
-        item.appendChild(body);
-        notesList.appendChild(item);
+        notesList.appendChild(createNoteElement(note));
     });
 }
 
@@ -118,26 +162,16 @@ async function createNote(event) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                title: title,
-                body: body,
+                title,
+                body,
                 userId: 1
             })
         });
 
-        // Add the new note to the top of the list
         const newNote = result.data;
-        const item = document.createElement("li");
 
-        const noteTitle = document.createElement("h3");
-        noteTitle.textContent = newNote.title;
-
-        const noteBody = document.createElement("p");
-        noteBody.textContent = newNote.body || "No content available.";
-
-        item.appendChild(noteTitle);
-        item.appendChild(noteBody);
-
-        notesList.prepend(item);
+        // JSONPlaceholder simulates creation; it does not persist notes.
+        notesList.prepend(createNoteElement(newNote));
 
         showStatus(
             `Note created (status ${result.status}, id ${newNote.id}).`,
@@ -157,6 +191,6 @@ async function createNote(event) {
     }
 }
 
-// Button and form event listeners
+// Event listeners
 loadButton.addEventListener("click", loadNotes);
 noteForm.addEventListener("submit", createNote);
